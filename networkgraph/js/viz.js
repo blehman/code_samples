@@ -14,7 +14,7 @@ var svg = d3.select("body").append("svg")
     .attr("height", height);
 
 
-d3.json("data/testingClusters_v8.json.gz", function(error, graph) {
+d3.json("data/testingClusters_v8.json", function(error, graph) {
     console.log(graph)
 
     force
