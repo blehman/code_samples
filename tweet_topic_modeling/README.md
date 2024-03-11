@@ -28,13 +28,13 @@ To replicate the analysis and visualize the topics:
 3. Activate the newly created environment:
 
    ```bash
-   conda activate topic-modeling
+   conda activate tweet_topic_modeling
    ```
    
 4. Launch the Jupyter Notebook:
 
    ```bash
-   jupyter notebook topic_modeling.ipynb
+   jupyter notebook tweet_topic_modeling.ipynb
    ```
 
 5. Follow the instructions in the notebook to execute the code cells and visualize the results.
