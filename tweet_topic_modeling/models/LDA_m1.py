@@ -2,10 +2,14 @@ import random
 import re
 import gensim
 from gensim import corpora
+from gensim.models import CoherenceModel
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from sklearn.model_selection import train_test_split
+import warnings
+
+warnings.filterwarnings('ignore')
 
 def preprocess_text(text):
     """Preprocess text by removing URLs, user mentions, 'RT', punctuation, non-alphabetic characters, stopwords, and perform stemming."""
@@ -51,6 +55,10 @@ def main(tweet_texts):
                                                 passes=10,
                                                 per_word_topics=True)
     
+    # Calculate coherence score
+    coherence_model_lda = CoherenceModel(model=lda_model, texts=train_tokens, dictionary=dictionary, coherence='c_v')
+    coherence_lda = coherence_model_lda.get_coherence()
+    
     # Label test set using the trained topic model
     test_corpus = [dictionary.doc2bow(text.split()) for text in test_texts]
     
@@ -61,8 +69,4 @@ def main(tweet_texts):
         dominant_topic = max(topic_distribution, key=lambda x: x[1])[0]
         test_topic_labels.append(dominant_topic)
     
-    # Print example of test tweet with its topic label
-    for i in range(5):  # Print labels for the first 5 test tweets
-        print("Test tweet:", test_texts[i])
-        print("Topic label:", test_topic_labels[i])
-        print("")
+    return lda_model, coherence_lda, test_texts, test_topic_labels
