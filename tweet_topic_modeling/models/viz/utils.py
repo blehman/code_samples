@@ -19,7 +19,7 @@ def get_replaced_tweets():
             return None
     return replaced_tweets
 
-def print_results(tweet_texts, unique_tweet_texts, train_texts, test_texts, lda_model, dictionary, test_corpus):
+def print_results(tweet_texts, unique_tweet_texts, train_texts, test_texts, lda_model, train_tokens, dictionary, test_corpus):
     """Print the results of topic modeling."""
     # Print statistics
     print(f"Initial tweets: {len(tweet_texts)}")
@@ -34,7 +34,7 @@ def print_results(tweet_texts, unique_tweet_texts, train_texts, test_texts, lda_
         print(f"Topic {idx}: {topic}")
         
     # Calculate coherence score
-    coherence_model_lda = CoherenceModel(model=lda_model, texts=train_texts, dictionary=dictionary, coherence='c_v')
+    coherence_model_lda = CoherenceModel(model=lda_model, texts=train_tokens, dictionary=dictionary, coherence='c_v')
     coherence_lda = coherence_model_lda.get_coherence()
     print(f"\nCoherence Score: {coherence_lda}\n")
 
