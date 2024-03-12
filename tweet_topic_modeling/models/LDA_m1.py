@@ -8,6 +8,7 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from sklearn.model_selection import train_test_split
 import warnings
+from models.viz.utils import get_replaced_tweets
 
 warnings.filterwarnings('ignore')
 
@@ -29,7 +30,7 @@ def preprocess_text(text):
     # Remove stopwords
     words = [word for word in words if word not in stop_words]
     # Stemming
-    words = [stemmer.stem(word) for word in words]
+    #words = [stemmer.stem(word) for word in words]
     return ' '.join(words)
 
 def main(tweet_texts):
@@ -38,7 +39,7 @@ def main(tweet_texts):
     processed_texts = [preprocess_text(text) for text in tweet_texts]
     
     # Split data into train and test sets
-    train_texts, test_texts = train_test_split(processed_texts, test_size=0.2, random_state=42)
+    train_texts, test_texts = train_test_split(processed_texts, test_size=0.35, random_state=42)
     
     # Tokenize again for training LDA
     train_tokens = [text.split() for text in train_texts]
@@ -52,7 +53,7 @@ def main(tweet_texts):
                                                 id2word=dictionary,
                                                 num_topics=5,
                                                 random_state=42,
-                                                passes=10,
+                                                passes=20,
                                                 per_word_topics=True)
     
     # Calculate coherence score

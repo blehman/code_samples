@@ -22,7 +22,7 @@ def preprocess_text(text):
     words = [word for word in words if word not in stop_words]
     
     # Stemming
-    words = [stemmer.stem(word) for word in words]
+    #words = [stemmer.stem(word) for word in words]
     return ' '.join(words)
 
 def main(tweet_texts):
