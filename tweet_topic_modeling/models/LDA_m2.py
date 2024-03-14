@@ -12,7 +12,7 @@ from gensim.models import CoherenceModel
 def preprocess_text(text):
     """Preprocess text by removing URLs, user mentions, and 'RT'."""
     stop_words = set(stopwords.words('english'))
-    stemmer = PorterStemmer()
+    #stemmer = PorterStemmer()
     
     # Remove URLs, user mentions, 'RT', punctuation, non-alphabetic characters
     text = re.sub(r'http\S+|@\w+|\bRT\b|[^a-zA-Z\s]', '', text)
@@ -25,7 +25,7 @@ def preprocess_text(text):
     #words = [stemmer.stem(word) for word in words]
     return ' '.join(words)
 
-def main(tweet_texts):
+def main(tweet_texts, alpha='auto', num_topics):
     """Main function to perform topic modeling."""
     # Clean and unique the tweet texts
     unique_tweet_texts = list(set([preprocess_text(text) for text in tweet_texts]))
@@ -47,16 +47,12 @@ def main(tweet_texts):
                                                 num_topics=5,
                                                 random_state=42,
                                                 passes=20,
-                                                per_word_topics=True)
-
-    # Calculate coherence score
-    coherence_model_lda = CoherenceModel(model=lda_model, texts=train_tokens, dictionary=dictionary, coherence='c_v')
-    coherence_lda = coherence_model_lda.get_coherence()
-    print(f"\nCoherence Score: {coherence_lda}\n")
+                                                per_word_topics=True,
+                                                alpha=alpha)
     
     # Label test set using the trained topic model
     test_corpus = [dictionary.doc2bow(text.split()) for text in test_texts]
 
     return tweet_texts, unique_tweet_texts, train_texts, test_texts, lda_model, train_tokens, dictionary, test_corpus
-    # Call the print_results function from the result printer module
+
     

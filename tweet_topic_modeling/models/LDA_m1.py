@@ -30,13 +30,16 @@ def preprocess_text(text):
     # Remove stopwords
     words = [word for word in words if word not in stop_words]
     # Stemming
-    #words = [stemmer.stem(word) for word in words]
+    words = [stemmer.stem(word) for word in words]
     return ' '.join(words)
 
-def main(tweet_texts):
+def main(tweet_texts, alpha='symmetric'):
     """Perform topic modeling using LDA."""
     # Preprocessing
     processed_texts = [preprocess_text(text) for text in tweet_texts]
+
+    # unique tweets
+    unique_tweet_texts = list(set([preprocess_text(text) for text in tweet_texts]))
     
     # Split data into train and test sets
     train_texts, test_texts = train_test_split(processed_texts, test_size=0.35, random_state=42)
@@ -54,20 +57,10 @@ def main(tweet_texts):
                                                 num_topics=5,
                                                 random_state=42,
                                                 passes=20,
-                                                per_word_topics=True)
-    
-    # Calculate coherence score
-    coherence_model_lda = CoherenceModel(model=lda_model, texts=train_tokens, dictionary=dictionary, coherence='c_v')
-    coherence_lda = coherence_model_lda.get_coherence()
-    
+                                                per_word_topics=True,
+                                                alpha=alpha)
+        
     # Label test set using the trained topic model
     test_corpus = [dictionary.doc2bow(text.split()) for text in test_texts]
     
-    # Predict topics for test set
-    test_topic_labels = []
-    for doc in test_corpus:
-        topic_distribution = lda_model.get_document_topics(doc)
-        dominant_topic = max(topic_distribution, key=lambda x: x[1])[0]
-        test_topic_labels.append(dominant_topic)
-    
-    return lda_model, coherence_lda, test_texts, test_topic_labels
+    return unique_tweet_texts, train_texts, train_tokens, test_texts, lda_model, dictionary, test_corpus, train_corpus

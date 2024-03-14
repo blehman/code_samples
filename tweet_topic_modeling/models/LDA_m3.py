@@ -1,51 +1,40 @@
 import random
 import re
 import gensim
-import langid
 from gensim import corpora
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer
 from sklearn.model_selection import train_test_split
-from models.viz.utils import generate_word_clouds, plot_bar_plots
+from gensim.models import CoherenceModel
+from models.viz.utils import filter_lang
+
 
 def preprocess_text(text):
-    # Preprocessing steps
+    """Preprocess text by removing URLs, user mentions, and 'RT'."""
+    
     stop_words = set(stopwords.words('english'))
-    stemmer = PorterStemmer()
 
-    # Remove URLs
-    text = re.sub(r'http\S+', '', text)
-    # Remove user mentions
-    text = re.sub(r'@\w+', '', text)
-    # Remove "RT"
-    text = re.sub(r'\bRT\b', '', text)
-    # Remove punctuation and non-alphabetic characters
-    text = re.sub(r'[^a-zA-Z\s]', '', text)
-    # Tokenization and lowercase
+    # Remove URLs, user mentions, 'RT', punctuation, non-alphabetic characters
+    text = re.sub(r'http\S+|@\w+|\bRT\b|[^a-zA-Z\s]', '', text)
+    
+    # Tokenization, lowercase, and removal of stopwords
     words = word_tokenize(text.lower())
-    # Remove stopwords
+    stop_words = stop_words.union(set(['half']))
     words = [word for word in words if word not in stop_words]
-    # Stemming
-    words = [stemmer.stem(word) for word in words]
+    
     return ' '.join(words)
 
-
-
-def main(tweet_texts, print_results=False, word_cloud=False, bar_plots=False, pyLDAvis=False):
+def main(tweet_texts, alpha='auto', num_topics=5):
     """Main function to perform topic modeling."""
     # Keep only tweets classified as english
-    english_tweet_texts = []
-    for tweet in tweet_texts:
-        lang, _ = langid.classify(tweet)
-        if lang == 'en':
-            english_tweet_texts.append(tweet)
-
+    tweet_texts_filtered = filter_lang(tweet_texts)
+    
     # Clean and unique the tweet texts
-    unique_english_tweet_texts = list(set([preprocess_text(text) for text in english_tweet_texts]))
+    unique_tweet_texts = list(set([preprocess_text(text) for text in tweet_texts_filtered]))
 
-    # Split data into train and test sets
-    train_texts, test_texts = train_test_split(unique_english_tweet_texts, test_size=0.2, random_state=42)
+    #processed_texts = [preprocess_text(text) for text in tweet_texts]
+    # Split data into train and test sets | note: tweet_texts could be exchanged with unique_tweet_texts
+    train_texts, test_texts = train_test_split(unique_tweet_texts, test_size=0.35, random_state=42)
 
     # Tokenize again for training LDA
     train_tokens = [text.split() for text in train_texts]
@@ -57,22 +46,19 @@ def main(tweet_texts, print_results=False, word_cloud=False, bar_plots=False, py
     # Perform topic modeling using LDA
     lda_model = gensim.models.ldamodel.LdaModel(corpus=train_corpus,
                                                 id2word=dictionary,
-                                                num_topics=5,
+                                                num_topics=num_topics,
                                                 random_state=42,
-                                                passes=10,
-                                                per_word_topics=True)
-
+                                                passes=20,
+                                                per_word_topics=True,
+                                                alpha='auto')
+    
     # Label test set using the trained topic model
     test_corpus = [dictionary.doc2bow(text.split()) for text in test_texts]
 
-return lda_model, train_corpus, dictionary
+    return lda_model, tweet_texts, num_toipcs, unique_tweet_texts, train_texts, train_tokens, test_texts, dictionary, test_corpus, train_corpus
 
-    if word_cloud:
-        generate_word_clouds(lda_model)
-    if bar_plots:
-        plot_bar_plots(lda_model)
-    if pyLDAvis:
-        return lda_model, train_corpus, dictionary
+
+
 
         
     

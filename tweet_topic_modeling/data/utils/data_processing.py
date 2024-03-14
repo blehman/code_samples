@@ -24,7 +24,7 @@ def generate_adila_phrase():
     Generate a Tom Robbins-style phrase for Adila.
     """
     adila_weird_nouns = ["gazelle", "volcano", "parrot", "bouncehouse", "mermaid", "cloud", "sunflower", "trampoline"]
-    adila_ridiculous_phrases = ["dancing with fireflies", "surfing on rainbows", "moonwalking on the ocean", "disco dancing with penguins", "cartwheeling through galaxies"]
+    adila_ridiculous_phrases = ["spelling words in the sky with fireflies", "surfing on rainbows projected from kitten sneezes", "moonwalking on the ocean", "disco dancing with penguins", "cartwheeling through galaxies"]
     adila_absurd_adjectives = ["sparkling", "celestial", "whimsical", "effervescent", "ethereal", "luminous", "resplendent", "radiant"]
     
     return generate_phrase(adila_weird_nouns,adila_ridiculous_phrases,adila_absurd_adjectives)
@@ -34,7 +34,7 @@ def generate_patrick_phrase():
     Generate a Tom Robbins-style phrase for Patrick.
     """
     patrick_weird_nouns = ["sphinx", "whirlwind", "tornado", "centaur", "meteor", "avalanche", "chimera", "typhoon"]
-    patrick_ridiculous_phrases = ["surfing on sand dunes", "dancing with ghosts", "whispering to trees", "juggling thunderbolts", "swimming in a sea of stars"]
+    patrick_ridiculous_phrases = ["cruising over sand dunes to find a mystic prince who breeds polecats", "playing pattycake with the ghosts of prairie dogs", "whispering to trees that host ceremonial honey badger weddings", "manifesting thunderbolts and trading them all for a baby otter", "swimming in a sea of stars with a gang of trash pandas"]
     patrick_absurd_adjectives = ["thundering", "cosmic", "mystical", "enigmatic", "surreal", "frenetic", "vibrant", "captivating"]
 
     return generate_phrase(patrick_weird_nouns,patrick_ridiculous_phrases,patrick_absurd_adjectives)
@@ -44,14 +44,14 @@ def generate_sesh_phrase():
     Generate a Tom Robbins-style phrase for Sesh.
     """
     sesh_weird_nouns = ["gargoyle", "moonbeam", "whirlpool", "quasar", "lightning", "shooting star", "volcano", "solar flare"]
-    sesh_ridiculous_phrases = ["riding on rainbow unicorns", "sailing on a sea of dreams", "whispering to the moon", "dancing with auroras", "juggling comets"]
+    sesh_ridiculous_phrases = ["riding unicorns with a friendly ferret", "sailing across the atlantic with a hamster dressed in a tux", "singing love songs to the moon", "blowing kisses to auroras", "juggling comets"]
     sesh_absurd_adjectives = ["splendiferous", "peculiar", "transcendent", "enchanting", "mythical", "fantastical", "spellbinding", "magnificent"]
     
     return generate_phrase(sesh_weird_nouns,sesh_ridiculous_phrases,sesh_absurd_adjectives)
 
 def generate_wild_adjective(name):
     """
-    note: being considered for deletion. 
+    note: consider deletion, but the words are sooooo fun. 
     Randomly select a wild adjective from a unique list keyed by name.
 
     Parameters:
@@ -85,11 +85,12 @@ def replace_phrase(tweet):
     else:
         tom_robbins_phrase = generate_sesh_phrase()
     
-    # Replace "golden retriever" with An Emily Dickinson adjective and one of the names 'Adila', 'Patrick', or 'Sesh'
-    replaced_tweet = re.sub(r'golden\s+retriever', f'{name}', tweet, flags=re.IGNORECASE) #{generate_wild_adjective(name)} 
     
     # Replace "pitbull" with a Tom Robbins-style phrase
-    replaced_tweet = re.sub(r'half\s+pitbull', f"half {tom_robbins_phrase}", replaced_tweet, flags=re.IGNORECASE)
+    replaced_tweet = re.sub(r'half\s+pitbull', f"half {tom_robbins_phrase},", replaced_tweet, flags=re.IGNORECASE)
+
+    # Replace "golden retriever" with An Emily Dickinson adjective and one of the names 'Adila', 'Patrick', or 'Sesh'
+    replaced_tweet = re.sub(r'golden\s+retriever', f'{name}', tweet, flags=re.IGNORECASE) #{generate_wild_adjective(name)} 
     
     return replaced_tweet
 
