@@ -221,3 +221,100 @@ def build_fugly_brokeness(data):
     line_chart = base + cv_chart + umass_chart
     coherence_chart = add_properties(line_chart, 'Coherence Scores','', get_altair_css()).resolve_scale(y = 'independent')
     return coherence_chart
+
+def add_multiline_properties(chart, title, subtitle, ALTAIR_CSS, faceted_chart=False):
+    """
+    :param chart: altair chart
+    :param title: string major title
+    :param subtitle: subtitle
+    :param ALTAIR_CSS: use get_altair_css() or similar dict
+    :param faceted_chart: boolean to determine if the chart parameter is faceted
+    :return: chart with properties added
+    """
+    if faceted_chart:
+        chart = chart.properties(
+            title = {'text':[title],'subtitle':[subtitle]}
+        ).configure_title(
+            fontSize=ALTAIR_CSS['configure_title']['fontSize'],
+            font=ALTAIR_CSS['configure_title']['font'],
+            anchor=ALTAIR_CSS['configure_title']['anchor'],
+            color=ALTAIR_CSS['configure_title']['color']
+        ).configure_legend(
+            labelFontSize=ALTAIR_CSS['configure_legend']['labelFontSize'],
+            labelFont=ALTAIR_CSS['configure_legend']['labelFont'],
+            labelOverlap=ALTAIR_CSS['configure_legend']['labelOverlap'],
+            symbolSize=ALTAIR_CSS['configure_legend']['symbolSize'],
+            symbolStrokeWidth=ALTAIR_CSS['configure_legend']['symbolStrokeWidth'],
+            titleFontSize=ALTAIR_CSS['configure_legend']['titleFontSize'],
+            title=None
+        ).configure_axis(titleFontSize=ALTAIR_CSS['configure_legend']['titleFontSize'])
+    else:
+        chart = chart.properties(
+            width=ALTAIR_CSS['properties']['width'],
+            height=ALTAIR_CSS['properties']['height'],
+            title = {'text':[title],'subtitle':[subtitle]}
+        ).configure_title(
+            fontSize=ALTAIR_CSS['configure_title']['fontSize'],
+            font=ALTAIR_CSS['configure_title']['font'],
+            anchor=ALTAIR_CSS['configure_title']['anchor'],
+            color=ALTAIR_CSS['configure_title']['color']
+        ).configure_legend(
+            labelFontSize=ALTAIR_CSS['configure_legend']['labelFontSize'],
+            labelFont=ALTAIR_CSS['configure_legend']['labelFont'],
+            labelOverlap=ALTAIR_CSS['configure_legend']['labelOverlap'],
+            symbolSize=ALTAIR_CSS['configure_legend']['symbolSize'],
+            symbolStrokeWidth=ALTAIR_CSS['configure_legend']['symbolStrokeWidth'],
+            titleFontSize=ALTAIR_CSS['configure_legend']['titleFontSize'],
+            title=None
+        ).configure_axis(titleFontSize=ALTAIR_CSS['configure_legend']['titleFontSize']         
+        ).configure_axisLeft(labelColor='black', titleColor='black', titleFont='Courier'
+        ).configure_axisRight(labelColor='#2ca02c', titleColor='#2ca02c', titleFont='Courier')
+    return chart
+    
+def build_multiline_altair(data):
+    base = alt.Chart(data).mark_line().transform_fold(
+        ['c_v', 'u_mass'],
+        as_=['Measure', 'Value']
+    ).encode(
+        color = alt.Color('model_name:N'),
+    )
+    
+    
+    cv_chart = base.mark_line(point=True, opacity=0.90).encode(
+        x='num_topics',
+        y=alt.Y('c_v', title='c_v score'),
+        #color = alt.Color('model_name:N', scale=alt.Scale(scheme='category10')),
+        tooltip=['c_v','model_name', 'num_topics'],
+    )
+    umass_chart = base.mark_line(point=True, opacity=1).encode(
+        x='num_topics',
+        y=alt.Y('u_mass', title='u_mass score'),
+        #color = alt.Color('model_name:N', scale=alt.Scale(scheme='dark2')),
+        tooltip=['u_mass','model_name', 'num_topics'],
+        #shape=alt.Shape('model_name', scale=alt.Scale(range=['cross']))
+    )
+    umass_circles = base.mark_circle(
+        fillOpacity=0,
+        stroke='#2ca02c',
+        size=70
+    ).encode(
+        x=alt.X('num_topics', ),
+        y=alt.Y('u_mass', axis=alt.Axis(labels=False), title=""),
+        tooltip=['u_mass','model_name', 'num_topics'],
+        #size='sum(count):Q',
+    )
+    cv_circles = base.mark_circle(
+        fillOpacity=0,
+        stroke='black',
+        size=70
+    ).encode(
+        x=alt.X('num_topics', scale=alt.Scale(domain=[2, 20.9])),
+        y=alt.Y('c_v', axis=alt.Axis(labels=False), title=""),
+        tooltip=['c_v','model_name', 'num_topics'],
+        #size='sum(count):Q',
+    )
+    line_chart = base + cv_chart + umass_chart + umass_circles + cv_circles
+    coherence_chart = add_multiline_properties(line_chart, "Topic Model(s) Coherence Scores","", get_altair_css()).resolve_scale(y = 'independent')
+                                                                                                                                      #, color='independent'
+                                                                                                                                    #, shape='independent')
+    return coherence_chart
