@@ -48,13 +48,17 @@ def get_coherence_score(lda_model, train_tokens, dictionary, coherence_method):
     """Get coherence score for the given LDA model and method."""
     return CoherenceModel(model=lda_model, texts=train_tokens, dictionary=dictionary, coherence=coherence_method).get_coherence()
       
-def pickle_file(obj, obj_name):
+def pickle_file(obj, obj_name,passes=20):
     """Save object to a pickle file."""
-    with open("data/"+obj_name+"_baseline"+"_25passes"+".pkl", 'wb') as f:
+    with open(f"data/{obj_name}_baseline_{passes}passes.pkl", 'wb') as f:
         pkl.dump(obj, f, protocol=pkl.HIGHEST_PROTOCOL)
         
 def main(tweet_texts):
     """Main function to perform topic modeling."""
+    # setup
+    passes = 20
+    random_state = 42
+    per_word_topics = True
     # Keep only tweets classified as English
     tweet_texts_filtered = filter_lang(tweet_texts)
     pickle_file(tweet_texts_filtered, "tweet_texts_filtered")
@@ -100,36 +104,35 @@ def main(tweet_texts):
         "coherence_scores_cv": [],
         "model": []
     }
-    
     for num_topics in range(3, 21):
         modeling_params = [
             {"corpus": train_corpus_m1,
              "id2word": dictionary_m1,
              "num_topics": num_topics,
-             "random_state": 42,
-             "passes": 20,
-             "per_word_topics": True,
+             "random_state": random_state,
+             "passes": passes,
+             "per_word_topics": per_word_topics,
              "alpha": 'auto'},
             {"corpus": train_corpus_m1,
              "id2word": dictionary_m1,
              "num_topics": num_topics,
-             "random_state": 42,
-             "passes": 20,
-             "per_word_topics": True,
+             "random_state": random_state,
+             "passes": passes,
+             "per_word_topics": per_word_topics,
              "alpha": 'symmetric'},
             {"corpus": train_corpus_m2,
              "id2word": dictionary_m2,
              "num_topics": num_topics,
-             "random_state": 42,
-             "passes": 20,
-             "per_word_topics": True,
+             "random_state": random_state,
+             "passes": passes,
+             "per_word_topics": per_word_topics,
              "alpha": 'auto'},
             {"corpus": train_corpus_m2,
              "id2word": dictionary_m2,
              "num_topics": num_topics,
-             "random_state": 42,
-             "passes":20,
-             "per_word_topics": True,
+             "random_state": random_state,
+             "passes":passes,
+             "per_word_topics": per_word_topics,
              "alpha": 'symmetric'}
         ]
         for i, param in enumerate(modeling_params):

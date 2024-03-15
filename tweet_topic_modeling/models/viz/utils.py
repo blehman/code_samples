@@ -266,9 +266,16 @@ def add_multiline_properties(chart, title, subtitle, ALTAIR_CSS, faceted_chart=F
             symbolStrokeWidth=ALTAIR_CSS['configure_legend']['symbolStrokeWidth'],
             titleFontSize=ALTAIR_CSS['configure_legend']['titleFontSize'],
             title=None
-        ).configure_axis(titleFontSize=ALTAIR_CSS['configure_legend']['titleFontSize']         
+        ).configure_axis(titleFontSize=ALTAIR_CSS['configure_legend']['titleFontSize']
+                         , titleFont='Courier'
+                         ,          
         ).configure_axisLeft(labelColor='black', titleColor='black', titleFont='Courier'
-        ).configure_axisRight(labelColor='#2ca02c', titleColor='#2ca02c', titleFont='Courier')
+        ).configure_axisRight(labelColor='#2ca02c', titleColor='#2ca02c', titleFont='Courier'
+        ).configure_axisBottom(labelColor=ALTAIR_CSS['configure_title']['color']
+                               , titleColor = ALTAIR_CSS['configure_title']['color']
+                               , titleFont='Courier'
+        )
+        
     return chart
     
 def build_multiline_altair(data):
