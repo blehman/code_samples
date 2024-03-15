@@ -2,8 +2,9 @@ name: tweet_topic_modeling
 channels:
   - defaults
 dependencies:
-  - python==3.11
-  - pandas
   - jupyter
+  - python==3.11
   - matplotlib
+  - pandas
+  - altair
 prefix: /Users/lehman/opt/anaconda3/envs/tweet_topic_modeling

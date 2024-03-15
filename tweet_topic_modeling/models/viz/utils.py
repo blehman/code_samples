@@ -35,7 +35,7 @@ def filter_lang(tweet_texts):
         if lang == 'en':
             english_tweet_texts.append(tweet)
     return english_tweet_texts
-
+    
 def coherence_score(lda_model, train_tokens, dictionary):
     coherence_model_lda = CoherenceModel(model=lda_model, texts=train_tokens, dictionary=dictionary, coherence='c_v')
     c_v = coherence_model_lda.get_coherence()
@@ -43,7 +43,7 @@ def coherence_score(lda_model, train_tokens, dictionary):
     u_mass=coherence_model_lda.get_coherence()
     return c_v, u_mass
     
-def print_results(tweet_texts, unique_tweet_texts, train_texts, test_texts, lda_model, train_tokens, dictionary, test_corpus):
+def print_results(lda_model, tweet_texts, num_topics, unique_tweet_texts, train_texts, train_tokens, test_texts, dictionary, test_corpus, train_corpus):
     """Print the results of topic modeling."""
     # Print statistics
     print(f"Initial tweets: {len(tweet_texts)}")
@@ -62,7 +62,7 @@ def print_results(tweet_texts, unique_tweet_texts, train_texts, test_texts, lda_
     # Print tweets with topic label and probability
     print("Print 5 tweets with their topic label and probability:")
     for i, doc in enumerate(random.sample(test_corpus, 5)):
-        print("Test tweet:", test_text[i])
+        print("Test tweet:", unique_tweet_texts[i])
         topic_distribution = lda_model.get_document_topics(doc)
         for topic, prob in topic_distribution:
             print("Topic label:", topic, "Probability:", prob)

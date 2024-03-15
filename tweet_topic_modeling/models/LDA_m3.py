@@ -7,7 +7,7 @@ from nltk.corpus import stopwords
 from sklearn.model_selection import train_test_split
 from gensim.models import CoherenceModel
 from models.viz.utils import filter_lang
-
+from collections import defaultdict
 
 def preprocess_text(text):
     """Preprocess text by removing URLs, user mentions, and 'RT'."""
@@ -24,7 +24,7 @@ def preprocess_text(text):
     
     return ' '.join(words)
 
-def main(tweet_texts, alpha='auto', num_topics=5):
+def main(tweet_texts, alpha='auto', num_topics=3):
     """Main function to perform topic modeling."""
     # Keep only tweets classified as english
     tweet_texts_filtered = filter_lang(tweet_texts)
@@ -50,15 +50,35 @@ def main(tweet_texts, alpha='auto', num_topics=5):
                                                 random_state=42,
                                                 passes=20,
                                                 per_word_topics=True,
-                                                alpha='auto')
+                                                alpha=alpha)
     
     # Label test set using the trained topic model
     test_corpus = [dictionary.doc2bow(text.split()) for text in test_texts]
 
-    return lda_model, tweet_texts, num_toipcs, unique_tweet_texts, train_texts, train_tokens, test_texts, dictionary, test_corpus, train_corpus
+    return lda_model, tweet_texts, num_topics, unique_tweet_texts, train_texts, train_tokens, test_texts, dictionary, test_corpus, train_corpus
 
 
-
-
-        
+def create_mapping(unique_tweet_texts, tweet_texts):
+    """
+    Create a mapping from unique tweet texts to tweet texts.
     
+    Args:
+    - unique_tweet_texts (list): List of unique preprocessed tweet texts.
+    - tweet_texts (list): List of original tweet texts.
+    
+    Returns:
+    - mapping (dict): Mapping from unique tweet texts to tweet texts.
+    """
+    mapping = defaultdict(list)
+    
+    # Iterate through each original tweet text
+    for tweet_text in tweet_texts:
+        # Preprocess the tweet text
+        preprocessed_text = preprocess_text(tweet_text)
+        
+        # If the preprocessed text is in the set of unique preprocessed tweet texts
+        if preprocessed_text in unique_tweet_texts:
+            # Add the original tweet text to the corresponding list in the mapping
+            mapping[preprocessed_text].append(tweet_text)
+    
+    return mapping   
