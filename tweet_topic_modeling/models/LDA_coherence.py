@@ -8,6 +8,7 @@ from nltk.corpus import stopwords
 from sklearn.model_selection import train_test_split
 from gensim.models import CoherenceModel
 from models.viz.utils import filter_lang
+import joblib
 #from nltk.stem import PorterStemmer
 
 def preprocess_text_m1(text):
@@ -48,10 +49,6 @@ def get_coherence_score(lda_model, train_tokens, dictionary, coherence_method):
     """Get coherence score for the given LDA model and method."""
     return CoherenceModel(model=lda_model, texts=train_tokens, dictionary=dictionary, coherence=coherence_method).get_coherence()
       
-def pickle_file(obj, obj_name,passes=20):
-    """Save object to a pickle file."""
-    with open(f"data/{obj_name}_baseline_{passes}passes.pkl", 'wb') as f:
-        pkl.dump(obj, f, protocol=pkl.HIGHEST_PROTOCOL)
         
 def main(tweet_texts):
     """Main function to perform topic modeling."""
@@ -59,41 +56,42 @@ def main(tweet_texts):
     passes = 20
     random_state = 42
     per_word_topics = True
+    model_file_path = "data/lda/"
     # Keep only tweets classified as English
     tweet_texts_filtered = filter_lang(tweet_texts)
-    pickle_file(tweet_texts_filtered, "tweet_texts_filtered")
+    joblib.dump(tweet_texts_filtered, f"{model_file_path}tweet_texts_filtered.joblib")
         
     # Clean and unique the tweet texts
     tweet_texts_m1 = [preprocess_text_m1(text) for text in tweet_texts_filtered]
-    pickle_file(tweet_texts_m1, "unique_tweet_texts_m1")
+    joblib.dump(tweet_texts_m1, f"{model_file_path}unique_tweet_texts_m1.joblib")
     unique_tweet_texts_m2 = list(set([preprocess_text_m2(text) for text in tweet_texts_filtered]))
-    pickle_file(unique_tweet_texts_m2, "unique_tweet_texts_m2")
+    joblib.dump(unique_tweet_texts_m2, f"{model_file_path}unique_tweet_texts_m2.joblib")
     
     # Split data into train and test sets
     train_texts_m1, test_texts_m1 = train_test_split(tweet_texts_m1, test_size=0.35, random_state=42)
-    pickle_file(train_texts_m1, "train_texts_m1")
-    pickle_file(test_texts_m1, "test_texts_m1")
+    joblib.dump(train_texts_m1, f"{model_file_path}train_texts_m1.joblib")
+    joblib.dump(test_texts_m1, f"{model_file_path}test_texts_m1.joblib")
     
     train_texts_m2, test_texts_m2 = train_test_split(unique_tweet_texts_m2, test_size=0.35, random_state=42)
-    pickle_file(train_texts_m2, "train_texts_m2")
-    pickle_file(test_texts_m2, "test_texts_m2")
+    joblib.dump(train_texts_m2, f"{model_file_path}train_texts_m2.joblib")
+    joblib.dump(test_texts_m2, f"{model_file_path}test_texts_m2.joblib")
     
     # Tokenize again for training LDA
     train_tokens_m1 = [text.split() for text in train_texts_m1]
-    pickle_file(train_tokens_m1, "train_tokens_m1")
+    joblib.dump(train_tokens_m1, f"{model_file_path}train_tokens_m1.joblib")
     train_tokens_m2 = [text.split() for text in train_texts_m2]
-    pickle_file(train_tokens_m2, "train_tokens_m2")
+    joblib.dump(train_tokens_m2, f"{model_file_path}train_tokens_m2.joblib")
     
     # Create dictionary and corpus for topic modeling
     dictionary_m1 = corpora.Dictionary(train_tokens_m1)
-    pickle_file(dictionary_m1, "dictionary_m1")
+    joblib.dump(dictionary_m1, f"{model_file_path}dictionary_m1.joblib")
     dictionary_m2 = corpora.Dictionary(train_tokens_m2)
-    pickle_file(dictionary_m2, "dictionary_m2")
+    joblib.dump(dictionary_m2, f"{model_file_path}dictionary_m2.joblib")
     
     train_corpus_m1 = [dictionary_m1.doc2bow(tokens) for tokens in train_tokens_m1]
-    pickle_file(train_corpus_m1, "train_corpus_m1")
+    joblib.dump(train_corpus_m1, f"{model_file_path}train_corpus_m1.joblib")
     train_corpus_m2 = [dictionary_m2.doc2bow(tokens) for tokens in train_tokens_m2]
-    pickle_file(train_corpus_m2, "train_corpus_m2")
+    joblib.dump(train_corpus_m2, f"{model_file_path}train_corpus_m2.joblib")
 
     df_data = {
         "num_topics": [],
@@ -136,14 +134,15 @@ def main(tweet_texts):
              "alpha": 'symmetric'}
         ]
         for i, param in enumerate(modeling_params):
-            # Perform topic modeling using LDA
-            lda_model = gensim.models.ldamodel.LdaModel(**param)
-
             # Determine processing method
             method = "m2"
             if i <= 1:
                 method = "m1"
-
+                
+            # Perform topic modeling using LDA
+            lda_model = gensim.models.ldamodel.LdaModel(**param)
+            lda_model.save(f"{model_file_path}lda_{method+param['alpha']+str(num_topics)}.model")
+            
             # Get coherence scores
             coherence_scores_umass = get_coherence_score(lda_model, train_tokens_m1 if i <= 1 else train_tokens_m2, param['id2word'], 'u_mass')
             coherence_scores_cv = get_coherence_score(lda_model, train_tokens_m1 if i <= 1 else train_tokens_m2, param['id2word'], 'c_v')
@@ -156,9 +155,6 @@ def main(tweet_texts):
             df_data["coherence_scores_umass"].append(coherence_scores_umass)
             df_data["coherence_scores_cv"].append(coherence_scores_cv)
             df_data["model"].append(lda_model)
-
-        if num_topics % 5 == 0:
-            pickle_file(df_data, "df_data")
 
         print(f"---------------------------------------num_topics=={num_topics}---------------------------------------")
 

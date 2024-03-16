@@ -3,7 +3,6 @@ from wordcloud import WordCloud
 import pyLDAvis.gensim_models as gensimvis
 import pyLDAvis
 from gensim.models import CoherenceModel
-import pickle as pkl
 import random
 import langid
 import altair as alt
@@ -11,20 +10,18 @@ import numpy as np
 import pandas as pd
 from IPython.display import display
 import altair as alt
+import joblib
 
 plt.rcParams["figure.figsize"] = [10,5]
 
 def get_replaced_tweets():
     if 'replaced_tweets' not in locals() and 'replaced_tweets' not in globals(): 
         try:
-            with open("data/whimsy_tweets.pkl", 'rb') as f:
-                replaced_tweets = pkl.load(f)
+            replaced_tweets = joblib.load("data/whimsy_tweets.joblib")
         except FileNotFoundError:
-            print("Error: File not found.")
-            return None
+            raise Exception("Error: File not found.")
         except Exception as e:
-            print("Error:", e)
-            return None
+            raise Exception(f"{e}")
     return replaced_tweets
     
 def filter_lang(tweet_texts):
