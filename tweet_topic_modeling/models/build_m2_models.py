@@ -110,4 +110,4 @@ def main(tweet_texts, num_topics=9,method='m2',alpha='symmetric',passes=20,per_w
 
     print(f"---------------------------------------num_topics=={num_topics}---------------------------------------")
 
-    return lda_model, train_corpus, dictionary
+    return lda_model, train_corpus, dictionary, df_data
