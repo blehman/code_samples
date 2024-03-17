@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 from gensim.models import CoherenceModel
 from models.viz.utils import filter_lang
 import joblib
+import datetime 
 #from nltk.stem import PorterStemmer
 
 def preprocess_text_m1(text):
@@ -53,45 +54,46 @@ def get_coherence_score(lda_model, train_tokens, dictionary, coherence_method):
 def main(tweet_texts):
     """Main function to perform topic modeling."""
     # setup
+    time_created = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     passes = 20
     random_state = 42
     per_word_topics = True
     model_file_path = "data/lda/"
     # Keep only tweets classified as English
     tweet_texts_filtered = filter_lang(tweet_texts)
-    joblib.dump(tweet_texts_filtered, f"{model_file_path}tweet_texts_filtered.joblib")
+    joblib.dump(tweet_texts_filtered, f"{model_file_path}tweet_texts_filtered_{time_created}.joblib")
         
     # Clean and unique the tweet texts
     tweet_texts_m1 = [preprocess_text_m1(text) for text in tweet_texts_filtered]
-    joblib.dump(tweet_texts_m1, f"{model_file_path}unique_tweet_texts_m1.joblib")
+    joblib.dump(tweet_texts_m1, f"{model_file_path}unique_tweet_texts_m1_{time_created}.joblib")
     unique_tweet_texts_m2 = list(set([preprocess_text_m2(text) for text in tweet_texts_filtered]))
-    joblib.dump(unique_tweet_texts_m2, f"{model_file_path}unique_tweet_texts_m2.joblib")
+    joblib.dump(unique_tweet_texts_m2, f"{model_file_path}unique_tweet_texts_m2_{time_created}.joblib")
     
     # Split data into train and test sets
     train_texts_m1, test_texts_m1 = train_test_split(tweet_texts_m1, test_size=0.35, random_state=42)
-    joblib.dump(train_texts_m1, f"{model_file_path}train_texts_m1.joblib")
-    joblib.dump(test_texts_m1, f"{model_file_path}test_texts_m1.joblib")
+    joblib.dump(train_texts_m1, f"{model_file_path}train_texts_m1_{time_created}.joblib")
+    joblib.dump(test_texts_m1, f"{model_file_path}test_texts_m1_{time_created}.joblib")
     
     train_texts_m2, test_texts_m2 = train_test_split(unique_tweet_texts_m2, test_size=0.35, random_state=42)
-    joblib.dump(train_texts_m2, f"{model_file_path}train_texts_m2.joblib")
-    joblib.dump(test_texts_m2, f"{model_file_path}test_texts_m2.joblib")
+    joblib.dump(train_texts_m2, f"{model_file_path}train_texts_m2_{time_created}.joblib")
+    joblib.dump(test_texts_m2, f"{model_file_path}test_texts_m2_{time_created}.joblib")
     
     # Tokenize again for training LDA
     train_tokens_m1 = [text.split() for text in train_texts_m1]
-    joblib.dump(train_tokens_m1, f"{model_file_path}train_tokens_m1.joblib")
+    joblib.dump(train_tokens_m1, f"{model_file_path}train_tokens_m1_{time_created}.joblib")
     train_tokens_m2 = [text.split() for text in train_texts_m2]
-    joblib.dump(train_tokens_m2, f"{model_file_path}train_tokens_m2.joblib")
+    joblib.dump(train_tokens_m2, f"{model_file_path}train_tokens_m2_{time_created}.joblib")
     
     # Create dictionary and corpus for topic modeling
     dictionary_m1 = corpora.Dictionary(train_tokens_m1)
-    joblib.dump(dictionary_m1, f"{model_file_path}dictionary_m1.joblib")
+    joblib.dump(dictionary_m1, f"{model_file_path}dictionary_m1_{time_created}.joblib")
     dictionary_m2 = corpora.Dictionary(train_tokens_m2)
-    joblib.dump(dictionary_m2, f"{model_file_path}dictionary_m2.joblib")
+    joblib.dump(dictionary_m2, f"{model_file_path}dictionary_m2_{time_created}.joblib")
     
     train_corpus_m1 = [dictionary_m1.doc2bow(tokens) for tokens in train_tokens_m1]
-    joblib.dump(train_corpus_m1, f"{model_file_path}train_corpus_m1.joblib")
+    joblib.dump(train_corpus_m1, f"{model_file_path}train_corpus_m1_{time_created}.joblib")
     train_corpus_m2 = [dictionary_m2.doc2bow(tokens) for tokens in train_tokens_m2]
-    joblib.dump(train_corpus_m2, f"{model_file_path}train_corpus_m2.joblib")
+    joblib.dump(train_corpus_m2, f"{model_file_path}train_corpus_m2_{time_created}.joblib")
 
     df_data = {
         "num_topics": [],

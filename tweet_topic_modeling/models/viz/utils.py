@@ -92,16 +92,40 @@ def generate_topic_examples(lda_model, test_corpus, test_texts):
     for idx, topic in lda_model.print_topics(-1):
         print("Topic {}: {}".format(idx, topic))
 
+# def generate_word_clouds(lda_model):
+#     # Generate word clouds for each topic
+#     for idx, topic in lda_model.show_topics(formatted=False):
+#         word_freq = {word: freq for word, freq in topic}
+#         wordcloud = WordCloud(background_color='white').generate_from_frequencies(word_freq)
+#         plt.figure()
+#         plt.imshow(wordcloud, interpolation='bilinear')
+#         plt.title('Topic {}'.format(idx))
+#         plt.axis('off')
+#         plt.show()
 def generate_word_clouds(lda_model):
-    # Generate word clouds for each topic
+    num_topics = lda_model.num_topics
+    num_rows = (num_topics + 2) // 3  # Calculate the number of rows needed
+    fig, axes = plt.subplots(num_rows, 3, figsize=(15, 5*num_rows))
+
     for idx, topic in lda_model.show_topics(formatted=False):
         word_freq = {word: freq for word, freq in topic}
         wordcloud = WordCloud(background_color='white').generate_from_frequencies(word_freq)
-        plt.figure()
-        plt.imshow(wordcloud, interpolation='bilinear')
-        plt.title('Topic {}'.format(idx))
-        plt.axis('off')
-        plt.show()
+        row = idx // 3  # Calculate the row index
+        col = idx % 3    # Calculate the column index
+        ax = axes[row, col] if num_rows > 1 else axes[col]
+        ax.imshow(wordcloud, interpolation='bilinear')
+        ax.set_title('Topic {}'.format(idx))
+        ax.axis('off')
+
+    # Hide any empty subplots
+    for i in range(num_topics, num_rows * 3):
+        row = i // 3
+        col = i % 3
+        ax = axes[row, col] if num_rows > 1 else axes[col]
+        ax.axis('off')
+
+    plt.tight_layout()
+    plt.show()
 
 def plot_bar_plots(lda_model):
     # Create bar plots for the most frequent terms in each topic
