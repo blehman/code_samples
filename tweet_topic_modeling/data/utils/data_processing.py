@@ -1,7 +1,7 @@
 import random
 import re
 
-def generate_phrase(nouns, phrases, adjectives):
+def generate_phrase(nouns,phrases,adjectives):
     """
     Randomly select items from lists and combine the selections into a str.
 
@@ -17,18 +17,40 @@ def generate_phrase(nouns, phrases, adjectives):
     phrase = random.choice(phrases)
     adjective = random.choice(adjectives)
     return f"{adjective} {noun} {phrase}"
-
-def generate_name():
+    
+def generate_adila_phrase():
     """
-    Generate a random name from the given list.
-
-    Returns:
-        str: A random name.
+    Generate a Tom Robbins-style phrase for Adila.
     """
-    return random.choice(['Adila', 'Patrick', 'Sesh'])
+    adila_weird_nouns = ["gazelle", "volcano", "parrot", "bouncehouse", "mermaid", "cloud", "sunflower", "trampoline"]
+    adila_ridiculous_phrases = ["spelling words in the sky with fireflies", "surfing on rainbows projected from kitten sneezes", "moonwalking on the ocean", "disco dancing with penguins", "cartwheeling through galaxies"]
+    adila_absurd_adjectives = ["sparkling", "celestial", "whimsical", "effervescent", "ethereal", "luminous", "resplendent", "radiant"]
+    
+    return generate_phrase(adila_weird_nouns,adila_ridiculous_phrases,adila_absurd_adjectives)
+
+def generate_patrick_phrase():
+    """
+    Generate a Tom Robbins-style phrase for Patrick.
+    """
+    patrick_weird_nouns = ["sphinx", "whirlwind", "tornado", "centaur", "meteor", "avalanche", "chimera", "typhoon"]
+    patrick_ridiculous_phrases = ["cruising over sand dunes to find a mystic prince who breeds polecats", "playing pattycake with the ghosts of prairie dogs", "whispering to trees that host ceremonial honey badger weddings", "manifesting thunderbolts and trading them all for a baby otter", "swimming in a sea of stars with a gang of trash pandas"]
+    patrick_absurd_adjectives = ["thundering", "cosmic", "mystical", "enigmatic", "surreal", "frenetic", "vibrant", "captivating"]
+
+    return generate_phrase(patrick_weird_nouns,patrick_ridiculous_phrases,patrick_absurd_adjectives)
+    
+def generate_sesh_phrase():
+    """
+    Generate a Tom Robbins-style phrase for Sesh.
+    """
+    sesh_weird_nouns = ["gargoyle", "moonbeam", "whirlpool", "quasar", "lightning", "shooting star", "volcano", "solar flare"]
+    sesh_ridiculous_phrases = ["riding unicorns with a friendly ferret", "sailing across the atlantic with a hamster dressed in a tux", "singing love songs to the moon", "blowing kisses to auroras", "juggling comets"]
+    sesh_absurd_adjectives = ["splendiferous", "peculiar", "transcendent", "enchanting", "mythical", "fantastical", "spellbinding", "magnificent"]
+    
+    return generate_phrase(sesh_weird_nouns,sesh_ridiculous_phrases,sesh_absurd_adjectives)
 
 def generate_wild_adjective(name):
     """
+    note: consider deleting 
     Randomly select a wild adjective from a unique list keyed by name.
 
     Parameters:
@@ -39,29 +61,36 @@ def generate_wild_adjective(name):
     """
     wild_adj = {
         'Adila': ['gallimaufrous', 'brouhahic', 'lollygagging', 'nudiustertian', 'hobbledehoyish', 'hullaballooing'],
-        'Patrick': ['xertzian', 'wabbitish', 'smellfungous', 'cattywampous', 'smellfungous', 'doozyish'],
-        'Sesh': ['ratoonal', 'jiggery-pokeryish', 'zaftigish', 'bumfuzzling', 'hornswoggling', 'donnybrookian']
-    }
+        'Patrick': ['xertzian', 'wabbitish', 'smellfungous', 'cattywampous', 'smellfungous','doozyish'],
+        'Sesh':['ratoonal', 'jiggery-pokeryish', 'zaftigish', 'bumfuzzling', 'hornswoggling', 'donnybrookian']
+                }
     return random.choice(wild_adj[name])
 
-def replace_phrase(tweet, name):
+def replace_phrase(tweet):
     """
     Replace phrases in the tweet.
 
     Parameters:
         tweet (str): The tweet text.
-        name (str): The name to replace with.
 
     Returns:
         str: The tweet with replaced phrases.
     """
+    name = random.choice(['Adila', 'Patrick', 'Sesh'])
+    if name == 'Adila':
+        tom_robbins_phrase = generate_adila_phrase()
+    elif name == 'Patrick':
+        tom_robbins_phrase = generate_patrick_phrase()
+    else:
+        tom_robbins_phrase = generate_sesh_phrase()
+    
+    
     # Replace "pitbull" with a Tom Robbins-style phrase
-    tom_robbins_phrase = generate_phrase(nouns=["pitbull"], phrases=["half"], adjectives=["friendly"])
     replaced_tweet = re.sub(r'half\s+pitbull', f"half {tom_robbins_phrase},", tweet, flags=re.IGNORECASE)
 
     # Replace "golden retriever" with the given name
-    replaced_tweet = re.sub(r'golden\s+retriever', name, replaced_tweet, flags=re.IGNORECASE)
-
+    replaced_tweet = re.sub(r'golden\s+retriever', f'{name}', replaced_tweet, flags=re.IGNORECASE)
+    
     return replaced_tweet
 
 def process_tweets(tweet_texts):
@@ -76,6 +105,9 @@ def process_tweets(tweet_texts):
     """
     replaced_tweets = []
     for tweet in tweet_texts:
-        name = generate_name()
-        replaced_tweets.append(replace_phrase(tweet, name))
+        replaced_tweets.append(replace_phrase(tweet))
     return replaced_tweets
+
+if __name__ == "__main__":
+    tweet_texts = tweet_text  # List of 5000 tweets
+    replaced_tweets = process_tweets(tweet_texts)

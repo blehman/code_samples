@@ -1,8 +1,6 @@
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
-import pyLDAvis.gensim_models as gensimvis
-import pyLDAvis
-from gensim.models import CoherenceModel
+from gensim.models import CoherenceModel, LdaModel
 import random
 import langid
 import altair as alt
@@ -102,27 +100,25 @@ def generate_topic_examples(lda_model, test_corpus, test_texts):
 #         plt.title('Topic {}'.format(idx))
 #         plt.axis('off')
 #         plt.show()
-def generate_word_clouds(lda_model):
+def generate_word_clouds(lda_model, clouds_per_row=3):
     num_topics = lda_model.num_topics
-    num_rows = (num_topics + 2) // 3  # Calculate the number of rows needed
-    fig, axes = plt.subplots(num_rows, 3, figsize=(15, 5*num_rows))
+    num_rows = (num_topics + clouds_per_row - 1) // clouds_per_row  # Calculate the number of rows needed
+    fig, axes = plt.subplots(num_rows, clouds_per_row, figsize=(15, 5*num_rows))
 
     for idx, topic in lda_model.show_topics(formatted=False):
         word_freq = {word: freq for word, freq in topic}
-        wordcloud = WordCloud(background_color='white').generate_from_frequencies(word_freq)
-        row = idx // 3  # Calculate the row index
-        col = idx % 3    # Calculate the column index
+        wordcloud = WordCloud(background_color='white', contour_color='steelblue').generate_from_frequencies(word_freq)
+        row = idx // clouds_per_row  # Calculate the row index
+        col = idx % clouds_per_row    # Calculate the column index
         ax = axes[row, col] if num_rows > 1 else axes[col]
         ax.imshow(wordcloud, interpolation='bilinear')
         ax.set_title('Topic {}'.format(idx))
         ax.axis('off')
-
-    # Hide any empty subplots
-    for i in range(num_topics, num_rows * 3):
-        row = i // 3
-        col = i % 3
-        ax = axes[row, col] if num_rows > 1 else axes[col]
-        ax.axis('off')
+    
+    # Remove empty subplots if there are fewer topics than the maximum number of clouds per row
+    if num_topics % clouds_per_row != 0:
+        for ax in axes.flat[num_topics:]:
+            ax.remove()
 
     plt.tight_layout()
     plt.show()
@@ -138,13 +134,6 @@ def plot_bar_plots(lda_model):
         plt.xlabel('Frequency')
         plt.title('Topic {}'.format(idx))
         plt.show()
-        
-def visualize_pyldavis(lda_model, corpus, dictionary):
-    """Visualize pyLDAvis."""
-    lda_display = gensimvis.prepare(lda_model, corpus, dictionary, sort_topics=False)
-    pyLDAvis.display(lda_display)
-
-
 
 def get_altair_css():
     return {
@@ -346,3 +335,14 @@ def build_multiline_altair(data):
                                                                                                                                       #, color='independent'
                                                                                                                                     #, shape='independent')
     return coherence_chart
+
+def get_pyLDAvis_input(method = 'm2', alpha = 'symmetric', time_str = '20240317-132003', num_topics = 9):
+    lda_model = LdaModel.load(f'data/lda/lda_{method}{alpha}{str(num_topics)}.model')
+    train_corpus = joblib.load(f'data/lda/train_corpus_m2_{time_str}.joblib')
+    dictionary = joblib.load(f'data/lda/dictionary_m2_{time_str}.joblib')
+    df_data = pd.DataFrame(joblib.load(f'data/df_data_baseline_{time_str}.joblib'))
+    logic = ((df_data["method"]==method) & (df_data['num_topics']==num_topics) & (df_data['alpha'] == 'symmetric'))
+    coherence_scores_umass = df_data[logic]['coherence_scores_umass'].values[0]
+    coherence_scores_cv = df_data[logic]['coherence_scores_cv'].values[0]
+    
+    return lda_model, train_corpus, dictionary, coherence_scores_umass, coherence_scores_cv
