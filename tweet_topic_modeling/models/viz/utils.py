@@ -9,6 +9,7 @@ import pandas as pd
 from IPython.display import display
 import altair as alt
 import joblib
+from collections import defaultdict
 
 plt.rcParams["figure.figsize"] = [10,5]
 
@@ -346,3 +347,57 @@ def get_pyLDAvis_input(method = 'm2', alpha = 'symmetric', time_str = '20240317-
     coherence_scores_cv = df_data[logic]['coherence_scores_cv'].values[0]
     
     return lda_model, train_corpus, dictionary, coherence_scores_umass, coherence_scores_cv
+
+def create_mapping(unique_tweet_texts, tweet_texts, text_preper):
+    """
+    Create a mapping from unique tweet texts to tweet texts.
+    
+    Args:
+    - unique_tweet_texts (list): List of unique preprocessed tweet texts.
+    - tweet_texts (list): List of original tweet texts.
+    - text_preper (func): Text preprocessor 
+    
+    Returns:
+    - mapping (dict): Mapping from unique tweet texts to tweet texts.
+    """
+    mapping = defaultdict(list)
+    for tweet_text in tweet_texts:
+        preprocessed_text = text_preper(tweet_text)
+        if preprocessed_text in unique_tweet_texts:
+            mapping[preprocessed_text].append(tweet_text)
+    return mapping
+
+def print_original_tweets_for_topics(lda_model, unique_tweet_texts, mapping, dictionary):
+    """
+    Print one original tweet for each topic along with its topic label, probability, and percentage of unique tweets.
+    
+    Args:
+    - lda_model: Trained LDA model
+    - unique_tweet_texts: List of unique preprocessed tweet texts
+    - mapping: Mapping from unique tweet texts to tweet texts
+    - dictionary: Gensim dictionary object for converting text to bag-of-words representation
+    """
+    print("-------------------------------------------------------------")
+    print("ORIGINAL tweets with their topic label, probability, and percentage of unique tweets:")
+    print("-------------------------------------------------------------")
+    
+    tweets_printed_per_topic = defaultdict(int)
+    total_tweets_per_topic = defaultdict(int)
+
+    for doc in unique_tweet_texts:
+        topic_distribution = lda_model[dictionary.doc2bow(doc.split())]
+        highest_topic, _ = max(topic_distribution[0], key=lambda x: x[1])
+        total_tweets_per_topic[highest_topic] += 1
+    
+    for doc in unique_tweet_texts:
+        topic_distribution = lda_model[dictionary.doc2bow(doc.split())]
+        highest_topic, highest_proba = max(topic_distribution[0], key=lambda x: x[1])
+        
+        if tweets_printed_per_topic[highest_topic] < 1:
+            tweets_printed_per_topic[highest_topic] += 1
+            print("Topic:", highest_topic)
+            original_tweet = mapping[doc][0]  
+            print(f"ORIGINAL tweet: {original_tweet}")
+            print(f"Topic label: {highest_topic} Probability: {highest_proba}")
+            print(f"Percentage of unique tweets: {100 * total_tweets_per_topic[highest_topic] / len(unique_tweet_texts):.2f}%")
+            print("-------------------------------------------------------------")
