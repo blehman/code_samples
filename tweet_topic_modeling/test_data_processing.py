@@ -1,20 +1,5 @@
 import pytest
-from tweet_topic_modeling.data.utils.data_processing import *
-
-@pytest.fixture
-def single_tweet():
-    return "I have a half pitbull and it's adorable."
-
-@pytest.fixture
-def tweet_texts():
-    return [
-        "I have a half pitbull and it's adorable.",
-        "I love my golden retriever."
-    ]
-
-@pytest.fixture
-def name():
-    return "Adila"
+from data.utils.data_processing import *
     
 def test_replace_half_pitbull(single_tweet):
     replaced_tweet = replace_phrase(single_tweet)
@@ -25,10 +10,9 @@ def test_replace_golden_retriever():
     replaced_tweet = replace_phrase(tweet)
     assert "golden retriever" not in replaced_tweet
 
-def test_replace_with_tom_robbins_phrase(single_tweet, name):
-    replaced_tweet = replace_phrase(single_tweet)
-    print(f'hello: {any(name in replaced_tweet for name in ["Adila", "Patrick", "Sesh"])}')
-    assert any(name in replaced_tweet for name in ["Adila", "Patrick", "Sesh"]) is False
+def test_replace_with_tom_robbins_phrase(tweet_texts, names):
+    replaced_tweet = replace_phrase(tweet_texts[0])
+    assert any([name in replaced_tweet for name in names]) is False
 
 def test_process_tweets_returns_list(tweet_texts):
     replaced_tweets = process_tweets(tweet_texts)
@@ -39,17 +23,15 @@ def test_process_tweets_replaces_phrases(tweet_texts):
     for tweet, replaced_tweet in zip(tweet_texts, replaced_tweets):
         assert tweet != replaced_tweet
 
-def test_process_tweets_replaces_specific_phrases():
-    tweet_texts = ["I have a half pitbull and it's adorable.", "I love my golden retriever."]
+def test_process_tweets_replaces_specific_phrases(tweet_texts):
     replaced_tweets = process_tweets(tweet_texts)
     assert "half pitbull" not in replaced_tweets[0]
     assert "golden retriever" not in replaced_tweets[1]
 
-def test_replace_with_name():
-    tweet = "I love my golden retriever."
-    replaced_tweet = replace_phrase(tweet)
-    assert "TestName" not in replaced_tweet
-
+def test_replace_with_name(single_tweet, names):
+    replaced_tweet = replace_phrase(single_tweet)
+    assert any([name in replaced_tweet for name in names])
+    
 # Test generate_phrase function
 def test_generate_phrase():
     nouns = ['noun1', 'noun2', 'noun3']
