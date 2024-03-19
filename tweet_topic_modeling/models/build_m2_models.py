@@ -9,9 +9,9 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from sklearn.model_selection import train_test_split
 from gensim.models import CoherenceModel
-from tweet_topic_modeling.models.viz.utils import filter_lang
+from models.viz.utils import filter_lang
 from collections import defaultdict
-from tweet_topic_modeling.models.viz.utils import get_replaced_tweets
+from models.viz.utils import get_replaced_tweets
 
 def create_mapping(unique_tweet_texts, tweet_texts):
     """
