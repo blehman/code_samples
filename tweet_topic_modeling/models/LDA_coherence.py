@@ -90,7 +90,7 @@ def main(tweet_texts, save_file = False):
     dictionary_m2 = corpora.Dictionary(train_tokens_m2)
     s = joblib.dump(dictionary_m2, f"{model_file_path}dictionary_m2_{time_created}.joblib") if save_file else None
     
-    _m1 = [dictionary_m1.doc2bow(tokens) for tokens in train_tokens_m1]
+    train_corpus_m1 = [dictionary_m1.doc2bow(tokens) for tokens in train_tokens_m1]
     s = joblib.dump(train_corpus_m1, f"{model_file_path}train_corpus_m1_{time_created}.joblib") if save_file else None
     train_corpus_m2 = [dictionary_m2.doc2bow(tokens) for tokens in train_tokens_m2]
     s = joblib.dump(train_corpus_m2, f"{model_file_path}train_corpus_m2_{time_created}.joblib") if save_file else None

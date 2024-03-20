@@ -1,10 +1,10 @@
 # Topic Modeling of Twitter Data using BERT and LDA
 
-This repository contains code and data for performing topic modeling on a dataset of Twitter data using BERT embeddings and Latent Dirichlet Allocation (LDA). The goal is to extract meaningful topics from a collection of tweets and visualize them using various techniques.
+This repository contains code and data for performing topic modeling on some Tweets using Latent Dirichlet Allocation (LDA) and CorEx. The goal is to extract meaningful topics from a collection of tweets and visualize them using various techniques.
 
 ## Overview
 
-Topic modeling is a technique used to discover abstract topics within a collection of documents. In this project, we focus on analyzing a dataset of Twitter data containing tweets related to the topic "golden retriever". Our aim is to uncover the main themes and discussions present in the tweets.
+Topic modeling is a technique used to discover abstract topics within a collection of documents. In this project, the focus is focus on analyzing a dataset of Twitter data containing tweets related to the topic "golden retriever". Our aim is to uncover the main themes and discussions present in the tweets.
 
 ## Contents
 
