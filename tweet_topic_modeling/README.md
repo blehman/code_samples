@@ -8,7 +8,7 @@ Topic modeling is a technique used to discover abstract topics within a collecti
 
 ## Contents
 
-1. **Jupyter Notebook**: The main code is provided in a Jupyter Notebook (`topic_modeling.ipynb`). This notebook contains the Python code for data preprocessing, obtaining BERT embeddings, training an LDA model, and visualizing the results. It also includes insights and interpretations of the findings.
+1. **Jupyter Notebook**: The main code is provided in a Jupyter Notebook (`topic_modeling.ipynb`). This notebook contains the Python code for data preprocessing, training an LDA & CorEx models, and visualizing the results. It also includes insights and interpretations of the findings.
 
 2. **Data**: The dataset used in this project is stored in a `.pkl` file (`tweet_data.pkl`). It contains the text of 5000 tweets collected from Twitter's free public API using the search term "golden retriever".
 
