@@ -1,10 +1,16 @@
-name: tweet_topic_modeling
+name: tweet_topic_modeling_
 channels:
   - defaults
 dependencies:
-  - jupyter
-  - python==3.11
-  - matplotlib
-  - pandas
   - altair
-prefix: /Users/lehman/opt/anaconda3/envs/tweet_topic_modeling
+  - python=3.10
+  - pandas
+  - numpy
+  - matplotlib
+  - jupyter
+  - wordcloud
+  - nltk
+  - pytest
+  - python-graphviz
+  - coverage
+prefix: /Users/lehman/opt/anaconda3/envs/tweet_topic_modeling_
