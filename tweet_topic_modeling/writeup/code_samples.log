@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.3.8)  20 MAR 2024 03:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.3.8)  20 MAR 2024 03:47
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -300,18 +300,18 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 al/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc} <./apple l
 ogo grey.png> <./viz farm logo black on white.png>]
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <9> on input line 53.
+(Font)              <9> on input line 52.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 53.
+(Font)              <5> on input line 52.
 
 [2{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
 }]
-Underfull \hbox (badness 10000) in paragraph at lines 65--66
+Underfull \hbox (badness 10000) in paragraph at lines 64--65
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 74--76
+Underfull \hbox (badness 10000) in paragraph at lines 73--75
 
  []
 
@@ -337,7 +337,7 @@ l/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb></usr/local/
 texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/te
 xlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb></usr/local/texl
 ive/2023/texmf-dist/fonts/type1/public/cm-super/sfti1095.pfb>
-Output written on code_samples.pdf (3 pages, 222541 bytes).
+Output written on code_samples.pdf (3 pages, 222551 bytes).
 PDF statistics:
  145 PDF objects out of 1000 (max. 8388607)
  113 compressed objects within 2 object streams
