@@ -41,5 +41,5 @@ To replicate the analysis and visualize the topics:
 
 ## Results
 
-The results of the topic modeling analysis are presented in the notebook along with visualizations generated using word clouds, pyLDAvis, and coherence scores. These visualizations help interpret the discovered topics and provide insights into the discussions surrounding "golden retriever" on Twitter.
+The results of the topic modeling analysis are presented in the notebook along with visualizations generated using word clouds, pyLDAvis, and coherence scores. 
 
