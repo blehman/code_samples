@@ -1,0 +1,6 @@
+\contentsline {section}{\numberline {1}DataViz Team Request}{2}{section.1}%
+\contentsline {section}{\numberline {2}Candidate Sample Work}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Fluency using statistics and visualizations in Python}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Passion for creating informative visualizations}{2}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Collaborative comrade}{3}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Candidate Leading Principles}{3}{section.3}%
