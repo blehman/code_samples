@@ -18,7 +18,6 @@ def test_get_coherence_score(lda_model, train_tokens, dictionary):
     coherence_score = get_coherence_score(lda_model, train_tokens, dictionary, 'u_mass')
     assert isinstance(coherence_score, float)
 
-
 # Test main function
 def test_main(tweet_texts_large):
     # Prepare data for testing

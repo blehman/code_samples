@@ -51,7 +51,7 @@ def get_coherence_score(lda_model, train_tokens, dictionary, coherence_method):
     return CoherenceModel(model=lda_model, texts=train_tokens, dictionary=dictionary, coherence=coherence_method).get_coherence()
       
         
-def main(tweet_texts):
+def main(tweet_texts, save_file = False):
     """Main function to perform topic modeling."""
     # setup
     time_created = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -61,39 +61,39 @@ def main(tweet_texts):
     model_file_path = "data/lda/"
     # Keep only tweets classified as English
     tweet_texts_filtered = filter_lang(tweet_texts)
-    joblib.dump(tweet_texts_filtered, f"{model_file_path}tweet_texts_filtered_{time_created}.joblib")
+    s = joblib.dump(tweet_texts_filtered, f"{model_file_path}tweet_texts_filtered_{time_created}.joblib") if save_file else None
         
     # Clean and unique the tweet texts
     tweet_texts_m1 = [preprocess_text_m1(text) for text in tweet_texts_filtered]
-    joblib.dump(tweet_texts_m1, f"{model_file_path}unique_tweet_texts_m1_{time_created}.joblib")
+    s = joblib.dump(tweet_texts_m1, f"{model_file_path}unique_tweet_texts_m1_{time_created}.joblib") if save_file else None
     unique_tweet_texts_m2 = list(set([preprocess_text_m2(text) for text in tweet_texts_filtered]))
-    joblib.dump(unique_tweet_texts_m2, f"{model_file_path}unique_tweet_texts_m2_{time_created}.joblib")
+    s = joblib.dump(unique_tweet_texts_m2, f"{model_file_path}unique_tweet_texts_m2_{time_created}.joblib") if save_file else None
     
     # Split data into train and test sets
     train_texts_m1, test_texts_m1 = train_test_split(tweet_texts_m1, test_size=0.35, random_state=42)
-    joblib.dump(train_texts_m1, f"{model_file_path}train_texts_m1_{time_created}.joblib")
-    joblib.dump(test_texts_m1, f"{model_file_path}test_texts_m1_{time_created}.joblib")
+    s = joblib.dump(train_texts_m1, f"{model_file_path}train_texts_m1_{time_created}.joblib") if save_file else None
+    s = joblib.dump(test_texts_m1, f"{model_file_path}test_texts_m1_{time_created}.joblib") if save_file else None
     
     train_texts_m2, test_texts_m2 = train_test_split(unique_tweet_texts_m2, test_size=0.35, random_state=42)
-    joblib.dump(train_texts_m2, f"{model_file_path}train_texts_m2_{time_created}.joblib")
-    joblib.dump(test_texts_m2, f"{model_file_path}test_texts_m2_{time_created}.joblib")
+    s = joblib.dump(train_texts_m2, f"{model_file_path}train_texts_m2_{time_created}.joblib") if save_file else None
+    s = joblib.dump(test_texts_m2, f"{model_file_path}test_texts_m2_{time_created}.joblib") if save_file else None
     
     # Tokenize again for training LDA
     train_tokens_m1 = [text.split() for text in train_texts_m1]
-    joblib.dump(train_tokens_m1, f"{model_file_path}train_tokens_m1_{time_created}.joblib")
+    s = joblib.dump(train_tokens_m1, f"{model_file_path}train_tokens_m1_{time_created}.joblib") if save_file else None
     train_tokens_m2 = [text.split() for text in train_texts_m2]
-    joblib.dump(train_tokens_m2, f"{model_file_path}train_tokens_m2_{time_created}.joblib")
+    s = joblib.dump(train_tokens_m2, f"{model_file_path}train_tokens_m2_{time_created}.joblib") if save_file else None
     
     # Create dictionary and corpus for topic modeling
     dictionary_m1 = corpora.Dictionary(train_tokens_m1)
-    joblib.dump(dictionary_m1, f"{model_file_path}dictionary_m1_{time_created}.joblib")
+    s = joblib.dump(dictionary_m1, f"{model_file_path}dictionary_m1_{time_created}.joblib") if save_file else None
     dictionary_m2 = corpora.Dictionary(train_tokens_m2)
-    joblib.dump(dictionary_m2, f"{model_file_path}dictionary_m2_{time_created}.joblib")
+    s = joblib.dump(dictionary_m2, f"{model_file_path}dictionary_m2_{time_created}.joblib") if save_file else None
     
-    train_corpus_m1 = [dictionary_m1.doc2bow(tokens) for tokens in train_tokens_m1]
-    joblib.dump(train_corpus_m1, f"{model_file_path}train_corpus_m1_{time_created}.joblib")
+    _m1 = [dictionary_m1.doc2bow(tokens) for tokens in train_tokens_m1]
+    s = joblib.dump(train_corpus_m1, f"{model_file_path}train_corpus_m1_{time_created}.joblib") if save_file else None
     train_corpus_m2 = [dictionary_m2.doc2bow(tokens) for tokens in train_tokens_m2]
-    joblib.dump(train_corpus_m2, f"{model_file_path}train_corpus_m2_{time_created}.joblib")
+    s = joblib.dump(train_corpus_m2, f"{model_file_path}train_corpus_m2_{time_created}.joblib") if save_file else None
 
     df_data = {
         "num_topics": [],
@@ -143,10 +143,10 @@ def main(tweet_texts):
                 
             # Perform topic modeling using LDA
             lda_model = gensim.models.ldamodel.LdaModel(**param)
-            lda_model.save(f"{model_file_path}lda_{method+param['alpha']+str(num_topics)}.model")
+            s = lda_model.save(f"{model_file_path}lda_{method+param['alpha']+str(num_topics)}_{time_created}.model") if save_file else None
             
             # Get coherence scores
-            coherence_scores_umass = get_coherence_score(lda_model, train_tokens_m1 if i <= 1 else train_tokens_m2, param['id2word'], 'u_mass')
+            coherence_scores_umass = get_coherence_score(lda_model, train_tokens_m1 if i <= 1 else train_tokens_m2, param['id2word'], 'u_mass') 
             coherence_scores_cv = get_coherence_score(lda_model, train_tokens_m1 if i <= 1 else train_tokens_m2, param['id2word'], 'c_v')
 
             # Append data to dataframe

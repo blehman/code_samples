@@ -61,7 +61,7 @@ def print_results(lda_model, tweet_texts, num_topics, unique_tweet_texts, train_
         print("Test tweet:", unique_tweet_texts[i])
         topic_distribution = lda_model.get_document_topics(doc)
         for topic, prob in topic_distribution:
-            print("Topic label:", topic, "Probability:", prob)
+            print("Topic label:", topic, "\nProbability:", prob)
         print("")
 
 def topic_labels(lda_model, test_corpus):
@@ -338,7 +338,7 @@ def build_multiline_altair(data):
     return coherence_chart
 
 def get_pyLDAvis_input(method = 'm2', alpha = 'symmetric', time_str = '20240317-132003', num_topics = 9):
-    lda_model = LdaModel.load(f'data/lda/lda_{method}{alpha}{str(num_topics)}.model')
+    lda_model = LdaModel.load(f'data/lda/lda_{method}{alpha}{str(num_topics)}_{time_str}.model')
     train_corpus = joblib.load(f'data/lda/train_corpus_m2_{time_str}.joblib')
     dictionary = joblib.load(f'data/lda/dictionary_m2_{time_str}.joblib')
     df_data = pd.DataFrame(joblib.load(f'data/df_data_baseline_{time_str}.joblib'))
