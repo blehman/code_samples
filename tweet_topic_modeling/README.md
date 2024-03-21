@@ -1,4 +1,4 @@
-# Topic Modeling of Twitter Data using BERT and LDA
+# Topic Modeling of Twitter Data using LDA and CorEx
 
 This repository contains code and data for performing topic modeling on some Tweets using Latent Dirichlet Allocation (LDA) and CorEx. The goal is to extract meaningful topics from a collection of tweets and visualize them using various techniques.
 
@@ -34,7 +34,7 @@ To replicate the analysis and visualize the topics:
 4. Launch the Jupyter Notebook:
 
    ```bash
-   jupyter notebook tweet_topic_modeling.ipynb
+   jupyter notebook tom_robbins_whimsy.ipynb
    ```
 
 5. Follow the instructions in the notebook to execute the code cells and visualize the results.
