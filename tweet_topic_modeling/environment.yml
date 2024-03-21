@@ -1,4 +1,4 @@
-name: tweet_topic_modeling_
+name: tweet_topic_modeling
 channels:
   - defaults
 dependencies:
