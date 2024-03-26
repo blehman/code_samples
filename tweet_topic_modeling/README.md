@@ -4,7 +4,7 @@ This repository contains code and data for performing topic modeling on some Twe
 
 ## Overview
 
-Topic modeling is a technique used to discover abstract topics within a collection of documents. In this project, the focus is focus on analyzing a dataset of Twitter data containing tweets related to the topic "golden retriever". Our aim is to uncover the main themes and discussions present in the tweets.
+Topic modeling is a technique used to discover abstract topics within a collection of documents. In this project, the focus is on analyzing a Twitter dataset containing the search term "golden retriever". The aim is to uncover the main themes and discussions present in the tweets.
 
 ## Contents
 
