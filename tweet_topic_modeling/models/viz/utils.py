@@ -337,6 +337,59 @@ def build_multiline_altair(data):
                                                                                                                                     #, shape='independent')
     return coherence_chart
 
+
+def build_multiline_pop(data, selection = alt.selection_multi(fields=['model_name'], bind='legend')):
+    
+    base = alt.Chart(data).mark_line().transform_fold(
+        ['c_v', 'u_mass'],
+        as_=['Measure', 'Value']
+    ).encode(
+        color = alt.Color('model_name:N'),
+    )
+    
+    
+    cv_chart = base.mark_line(point=True, opacity=0.90).encode(
+        x='num_topics',
+        y=alt.Y('c_v', title='c_v score'),
+        #color = alt.Color('model_name:N', scale=alt.Scale(scheme='category10')),
+        tooltip=['c_v','model_name', 'num_topics'],
+        opacity = alt.condition(selection, alt.value(1), alt.value(0.2))
+    )
+    umass_chart = base.mark_line(point=True, opacity=1).encode(
+        x='num_topics',
+        y=alt.Y('u_mass', title='u_mass score'),
+        #color = alt.Color('model_name:N', scale=alt.Scale(scheme='dark2')),
+        tooltip=['u_mass','model_name', 'num_topics'],
+        opacity = alt.condition(selection, alt.value(1), alt.value(0.2))
+        #shape=alt.Shape('model_name', scale=alt.Scale(range=['cross']))
+    )
+    umass_circles = base.mark_circle(
+        fillOpacity=0,
+        stroke='#2ca02c',
+        size=70
+    ).encode(
+        x=alt.X('num_topics', ),
+        y=alt.Y('u_mass', axis=alt.Axis(labels=False), title=""),
+        tooltip=['u_mass','model_name', 'num_topics'],
+        #size='sum(count):Q',
+    )
+    cv_circles = base.mark_circle(
+        fillOpacity=0,
+        stroke='black',
+        size=70
+    ).encode(
+        x=alt.X('num_topics', scale=alt.Scale(domain=[2, 20.9])),
+        y=alt.Y('c_v', axis=alt.Axis(labels=False), title=""),
+        tooltip=['c_v','model_name', 'num_topics'],
+        #size='sum(count):Q',
+    )
+    line_chart = base + cv_chart + umass_chart + umass_circles + cv_circles
+    coherence_chart = add_multiline_properties(line_chart, "Topic Model(s) Coherence Scores","", get_altair_css()).resolve_scale(y = 'independent')
+                                                                                                                                      #, color='independent'
+    coherence_chart = coherence_chart.add_selection(selection)                                                                                                               #, shape='independent')
+    return coherence_chart
+
+
 def get_pyLDAvis_input(method = 'm2', alpha = 'symmetric', time_str = '20240317-132003', num_topics = 9):
     lda_model = LdaModel.load(f'data/lda/lda_{method}{alpha}{str(num_topics)}_{time_str}.model')
     train_corpus = joblib.load(f'data/lda/train_corpus_m2_{time_str}.joblib')
